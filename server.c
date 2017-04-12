@@ -4500,7 +4500,7 @@ void fnSaveData(void)
 
 fnSaveSPData(25);
 fnSaveDPData(5);
-fnSaveNMData(4);
+fnSaveNMData(5);
 fnSavePARData(2);
 
 			
