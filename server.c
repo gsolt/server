@@ -24,7 +24,7 @@
 * 1.7 2015.05.16. Gergely Zsolt       SRAM kezelés módosítása: több idõnek kell
 * eltelnie az írás és az olvasás között                                  
 * 1.8 2015.05.04					  Ha nem jó a dinamikus site table, nem
-									  kommunikál           
+									  kommunikál ( a statisztika tábla 16. eleme nem nulla)          
 * 1.9 2015.09.21					  Ha nem jó az RTU ideje, akkor a Front End
 									  idejét használja									                     
 ***-*************************************************************************/
