@@ -55,9 +55,9 @@
 #define MAX_DP_EVNUM 20
 #define MAX_NM_EVNUM 20
 
-#define MAX_NM_NUM 1200
+#define MAX_NM_NUM 1440
 #define MAX_SP_NUM 6250
-#define MAX_DP_NUM 1000
+#define MAX_DP_NUM 1250
 
 #define	BOOL				int
 #define	BYTE				unsigned char
@@ -386,7 +386,7 @@ typedef	struct
 	{
 	unsigned short nPAR[500];
 	strSP          SP[MAX_SP_NUM];
-	strDP          DP[MAX_DP_NUM];
+	strDP          DP[1500]; /* 1550 db-t ment el, de csak 1250-re nézi a változást */
 	strNM          NM[MAX_NM_NUM];	
 	}	strTotalData ;	
 	
@@ -4499,8 +4499,8 @@ void fnSaveData(void)
 {
 
 fnSaveSPData(25);
-fnSaveDPData(5);
-fnSaveNMData(5);
+fnSaveDPData(6);
+fnSaveNMData(6);
 fnSavePARData(2);
 
 			
@@ -4515,9 +4515,9 @@ char			message[300];
 fnGetSPData(25);
 MOSCAD_wait(350);
 
-fnGetDPData(4);
+fnGetDPData(6);
 MOSCAD_wait(250);
-fnGetNMData(5);
+fnGetNMData(6);
 MOSCAD_wait(250);
 fnGetIntData(2);
 MOSCAD_wait(150);
