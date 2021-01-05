@@ -26,7 +26,8 @@
 * 1.8 2015.05.04					  Ha nem jó a dinamikus site table, nem
 									  kommunikál ( a statisztika tábla 16. eleme nem nulla)          
 * 1.9 2015.09.21					  Ha nem jó az RTU ideje, akkor a Front End
-									  idejét használja									                     
+									  idejét használja						
+* 2.0 2020.06.10  Gergely Zsolt       NM, DP, SP darabszámok nõvelése                        			                     
 ***-*************************************************************************/
 
 /*--------------------------------------------------*/
@@ -55,9 +56,9 @@
 #define MAX_DP_EVNUM 20
 #define MAX_NM_EVNUM 20
 
-#define MAX_NM_NUM 1440
-#define MAX_SP_NUM 6250
-#define MAX_DP_NUM 1250
+#define MAX_NM_NUM 2400
+#define MAX_SP_NUM 8000
+#define MAX_DP_NUM 2500
 
 #define	BOOL				int
 #define	BYTE				unsigned char
@@ -386,7 +387,7 @@ typedef	struct
 	{
 	unsigned short nPAR[500];
 	strSP          SP[MAX_SP_NUM];
-	strDP          DP[1500]; /* 1550 db-t ment el, de csak 1250-re nézi a változást */
+	strDP          DP[MAX_DP_NUM]; /* 1550 db-t ment el, de csak 1250-re nézi a változást */
 	strNM          NM[MAX_NM_NUM];	
 	}	strTotalData ;	
 	
@@ -590,7 +591,7 @@ int       lTick_Rx; /* TESTFR ACT küldéshez */
 
 /* IEC -----------------------------------------------------------------------------------------------------------------------*/
 
-strSP_TABLE		sSPT[30];
+strSP_TABLE		sSPT[32];
 strNM_TABLE		sNMT[10];
 strDP_TABLE		sDPT[10];
 
@@ -622,6 +623,10 @@ CB_TABLE_INFO   table_DC2;
 CB_TABLE_INFO   table_DC3;
 CB_TABLE_INFO   table_DC4;
 CB_TABLE_INFO   table_DC5;
+CB_TABLE_INFO   table_DC6;
+CB_TABLE_INFO   table_DC7;
+CB_TABLE_INFO   table_DC8;
+
 
 CB_TABLE_INFO   table_EVT;
 CB_TABLE_INFO   table_SC;
@@ -629,6 +634,9 @@ CB_TABLE_INFO   table_SC2;
 CB_TABLE_INFO   table_SC3;
 CB_TABLE_INFO   table_SC4;
 CB_TABLE_INFO   table_SC5;
+CB_TABLE_INFO   table_SC6;
+CB_TABLE_INFO   table_SC7;
+CB_TABLE_INFO   table_SC8;
 
 
 CB_TABLE_INFO   table_DC_Event;
@@ -670,9 +678,10 @@ short          *p_col_DC_Min;
 short          *p_col_DC_Sec;
 
 
-strSP_TABLE		sSPT[30];
+/* strSP_TABLE		sSPT[30];
 strNM_TABLE		sNMT[10];
-strDP_TABLE		sDPT[10];
+strDP_TABLE		sDPT[10]; */
+
 
 
 
@@ -684,6 +693,9 @@ short          *p_col_DC2;
 short          *p_col_DC3;
 short          *p_col_DC4;
 short          *p_col_DC5;
+short          *p_col_DC6;
+short          *p_col_DC7;
+short          *p_col_DC8;
 
 
 short          *p_col_SC;
@@ -691,6 +703,9 @@ short          *p_col_SC2;
 short          *p_col_SC3;
 short          *p_col_SC4;
 short          *p_col_SC5;
+short          *p_col_SC6;
+short          *p_col_SC7;
+short          *p_col_SC8;
 
 
 BYTE			byRowNumMon;
@@ -748,6 +763,9 @@ int					nDCTblIndx2;
 int					nDCTblIndx3;
 int					nDCTblIndx4;
 int					nDCTblIndx5;
+int					nDCTblIndx6;
+int					nDCTblIndx7;
+int					nDCTblIndx8;
 
 
 int					nDCNum;
@@ -757,6 +775,9 @@ int					nSCTblIndx2;
 int					nSCTblIndx3;
 int					nSCTblIndx4;
 int					nSCTblIndx5;
+int					nSCTblIndx6;
+int					nSCTblIndx7;
+int					nSCTblIndx8;
 
 
 int					nSCNum;
@@ -1719,6 +1740,22 @@ do
 												nSCStep[INDX] = 1;
 											}
 
+ 											else if (nOffset>=1250 && nOffset<1500)
+											{
+												p_col_SC6[nOffset-1250] = ioSC.bySC ;	
+												nSCStep[INDX] = 1;
+											}
+ 											else if (nOffset>=1500 && nOffset<1750)
+											{
+												p_col_SC7[nOffset-1500] = ioSC.bySC ;	
+												nSCStep[INDX] = 1;
+											}
+ 											else if (nOffset>=1750 && nOffset<2000)
+											{
+												p_col_SC8[nOffset-1750] = ioSC.bySC ;	
+												nSCStep[INDX] = 1;
+											}
+
 
                       nSCStep[INDX] = 1;  /* Ideiglenes */
 											/*(message,"lIOA %d",lIOA);
@@ -1833,6 +1870,18 @@ do
 											else if (nOffset>=1000 && nOffset<1250)
 											{
 												p_col_DC5[nOffset-1000] = ioDC.byDC ;	
+											}
+											else if (nOffset>=1250 && nOffset<1500)
+											{
+												p_col_DC6[nOffset-1250] = ioDC.byDC ;	
+											}
+											else if (nOffset>=1500 && nOffset<1750)
+											{
+												p_col_DC7[nOffset-1500] = ioDC.byDC ;	
+											}
+											else if (nOffset>=1750 && nOffset<2000)
+											{
+												p_col_DC8[nOffset-1750] = ioDC.byDC ;	
 											}
 											
 											
@@ -3310,6 +3359,36 @@ if ((nStart == 0) )
    		}
 	p_col_DC5 = (short *)(table_DC5.ColDataPtr[0]);
 
+	/* Double command 6. */
+	nDCTblIndx6 = p_col_parInt[86];	
+	if (MOSCAD_get_table_info (nDCTblIndx6,&table_DC6)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nDCTblIndx6);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_DC6 = (short *)(table_DC6.ColDataPtr[0]);
+
+	/* Double command 7. */
+	nDCTblIndx7 = p_col_parInt[103];	
+	if (MOSCAD_get_table_info (nDCTblIndx7,&table_DC7)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nDCTblIndx7);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_DC7 = (short *)(table_DC7.ColDataPtr[0]);
+
+	/* Double command 8. */
+	nDCTblIndx8 = p_col_parInt[104];	
+	if (MOSCAD_get_table_info (nDCTblIndx8,&table_DC8)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nDCTblIndx8);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_DC8 = (short *)(table_DC8.ColDataPtr[0]);
+
         MOSCAD_sprintf(message,"=====================fnReadPar step2");
         MOSCAD_error(message );
 
@@ -3363,6 +3442,36 @@ if ((nStart == 0) )
    		}
 	p_col_SC5 = (short *)(table_SC5.ColDataPtr[0]);
 
+	/* Single command 6. */
+	nSCTblIndx6 = p_col_parInt[87];	
+	if (MOSCAD_get_table_info (nSCTblIndx6,&table_SC6)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nSCTblIndx6);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_SC6 = (short *)(table_SC6.ColDataPtr[0]);
+
+
+	/* Single command 7. */
+	nSCTblIndx7 = p_col_parInt[105];	
+	if (MOSCAD_get_table_info (nSCTblIndx7,&table_SC7)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nSCTblIndx7);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_SC7 = (short *)(table_SC7.ColDataPtr[0]);
+
+	/* Single command 8. */
+	nSCTblIndx7 = p_col_parInt[106];	
+	if (MOSCAD_get_table_info (nSCTblIndx7,&table_SC8)!=0 )
+   		{
+        MOSCAD_sprintf(message,"No valid information in table: %d",nSCTblIndx8);
+        MOSCAD_error(message );
+        return;
+   		}
+	p_col_SC8 = (short *)(table_SC8.ColDataPtr[0]);
 
 
         MOSCAD_sprintf(message,"=====================fnReadPar step3,p_col_SC: %p, p_col_SC2: %p, p_col_SC3: %p",p_col_SC,p_col_SC2,p_col_SC3);
@@ -3462,9 +3571,9 @@ nSaveTables =p_col_parInt[90];
  
 
 
-		fnSP_TABLE(30);
-		fnNM_TABLE(6);
-		fnDP_TABLE(6);
+		fnSP_TABLE(32);
+		fnNM_TABLE(10);
+		fnDP_TABLE(10);
     
     
 if (nLenIOA > 3 ) 
@@ -4341,6 +4450,8 @@ nIndxTbl[26] = p_col_parInt[80];
 nIndxTbl[27] = p_col_parInt[81];
 nIndxTbl[28] = p_col_parInt[82];
 nIndxTbl[29] = p_col_parInt[83];
+nIndxTbl[30] = p_col_parInt[93];
+nIndxTbl[31] = p_col_parInt[94];
 
 
 
@@ -4394,6 +4505,10 @@ nIndxTbl[2]  = p_col_parInt[56];
 nIndxTbl[3]  = p_col_parInt[65];
 nIndxTbl[4]  = p_col_parInt[75];
 nIndxTbl[5]  = p_col_parInt[84];
+nIndxTbl[6]  = p_col_parInt[95];
+nIndxTbl[7]  = p_col_parInt[96];
+nIndxTbl[8]  = p_col_parInt[97];
+nIndxTbl[9]  = p_col_parInt[98];
 
 
 
@@ -4445,6 +4560,10 @@ nIndxTbl[2]  = p_col_parInt[55];
 nIndxTbl[3]  = p_col_parInt[67];
 nIndxTbl[4]  = p_col_parInt[76];
 nIndxTbl[5]  = p_col_parInt[85];
+nIndxTbl[6]  = p_col_parInt[99];
+nIndxTbl[7]  = p_col_parInt[100];
+nIndxTbl[8]  = p_col_parInt[101];
+nIndxTbl[9]  = p_col_parInt[102];
 
 
 
@@ -4498,9 +4617,9 @@ void fnEvents(IEC_DUI_104		duiRec, int INDX)
 void fnSaveData(void)
 {
 
-fnSaveSPData(25);
-fnSaveDPData(6);
-fnSaveNMData(6);
+fnSaveSPData(32);
+fnSaveDPData(10);
+fnSaveNMData(10);
 fnSavePARData(2);
 
 			
@@ -4512,15 +4631,15 @@ void fnGetData(void)
 {
 char			message[300];
 
-fnGetSPData(25);
+fnGetSPData(32);
 MOSCAD_wait(350);
 
-fnGetDPData(6);
-MOSCAD_wait(250);
-fnGetNMData(6);
+fnGetDPData(10);
+MOSCAD_wait(280);
+fnGetNMData(10);
 MOSCAD_wait(250);
 fnGetIntData(2);
-MOSCAD_wait(150);
+MOSCAD_wait(250);
 
 MOSCAD_sprintf(message,"IECDRV2: database initialised, data read from SRAM and write to tables, nSPNum: %d ---------------------", TotalData->nPAR[9]);
 MOSCAD_message(message );
@@ -4694,7 +4813,7 @@ CB_TABLE_INFO   table_parInt;
 	p_col_parInt = (short *)(table_parInt.ColDataPtr[0]);	
 
 
-				for (nJ=0;nJ<88;nJ++)
+				for (nJ=0;nJ<250;nJ++)
 					{   					
    					 TotalData->nPAR[nJ] =  p_col_parInt[nJ];  					   									
 					}  
@@ -4732,6 +4851,11 @@ for (nI=0;nI<nTableNum;nI++)
 				p_col_SP_XORAct = sSPT[nTblIndx].p_col_SP_XOR; 	
 				p_col_SP_STATUS = sSPT[nTblIndx].p_col_SP_STATUS;	
 
+
+        if (nI==15)
+        {
+        MOSCAD_wait(280);
+        }
 
 				for (nJ=0;nJ<250;nJ++)
 					{
@@ -4864,7 +4988,7 @@ CB_TABLE_INFO   table_parInt;
    		}
 	p_col_parInt = (short *)(table_parInt.ColDataPtr[0]);	
 
-		for (nJ=0;nJ<88;nJ++)
+		for (nJ=0;nJ<250;nJ++)
 			{
 				 p_col_parInt[nJ] = TotalData->nPAR[nJ];    					    					   									
 			}  
